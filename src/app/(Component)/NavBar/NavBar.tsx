@@ -59,10 +59,15 @@ function NavBar() {
   };
 
   React.useEffect(() => {
-    if (token) {
-      getUserDataFn(token);
+    // Only runs on the client
+    const storedToken =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (storedToken && !token) {
+      getUserDataFn(storedToken); // Use stored token if Redux token is null
+    } else if (token && !user) {
+      getUserDataFn(token); // Use Redux token if available and no user data
     }
-  }, [token]);
+  }, [token, user, getUserDataFn]);
 
   return (
     <AppBar position="sticky">
@@ -190,11 +195,11 @@ function NavBar() {
           </Box>
 
           {/* mobile */}
-          <Typography>{user?.name}</Typography>
+
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={user?.name} src={user?.photo} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -213,6 +218,9 @@ function NavBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography>{user?.name}</Typography>
+              </MenuItem>
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                   <Typography sx={{ textAlign: "center" }}>
