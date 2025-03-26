@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { IoMdMore } from "react-icons/io";
 
+
 export default function PostCard({ post }: postData) {
   return (
     <div>
@@ -33,6 +34,7 @@ export default function PostCard({ post }: postData) {
             <CardMedia
               component="img"
               height="140px"
+              width="90%"
               image={post.image}
               alt={post.user?.name}
             />
